@@ -1,7 +1,7 @@
 {
   "name": "Agent",
   "plugins": [],
-  "clients": [],
+  "clients": ["telegram"],
   "modelProvider": "openai",
   "settings": {
     "voice": {
