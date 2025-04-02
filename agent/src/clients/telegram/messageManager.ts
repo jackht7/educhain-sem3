@@ -656,10 +656,18 @@ export class MessageManager {
       const chunks = this.splitMessage(content.text);
       const sentMessages: Message.TextMessage[] = [];
 
-      for (let i = 0; i < chunks.length; i++) {
-        const chunk = escapeMarkdown(chunks[i]);
-        const sentMessage = (await ctx.telegram.sendMessage(ctx.chat.id, chunk, {
-          reply_parameters: i === 0 && replyToMessageId ? { message_id: replyToMessageId } : undefined,
+      // for (let i = 0; i < chunks.length; i++) {
+      //   const chunk = escapeMarkdown(chunks[i]);
+      //   const sentMessage = (await ctx.telegram.sendMessage(ctx.chat.id, chunk, {
+      //     reply_parameters: i === 0 && replyToMessageId ? { message_id: replyToMessageId } : undefined,
+      //     parse_mode: 'Markdown',
+      //   })) as Message.TextMessage;
+
+      //   sentMessages.push(sentMessage);
+      // }
+      for (const chunk of chunks) {
+        const escapedChunk = escapeMarkdown(chunk);
+        const sentMessage = (await ctx.telegram.sendMessage(ctx.chat.id, escapedChunk, {
           parse_mode: 'Markdown',
         })) as Message.TextMessage;
 
@@ -887,6 +895,16 @@ export class MessageManager {
     }
 
     try {
+      // Placeholder message
+      const placeholderMessage = 'Thinking hard...Almost there...🤔💭';
+      let placeholderMessageId: number | undefined;
+      try {
+        const sentMessage = await ctx.telegram.sendMessage(ctx.chat.id, placeholderMessage);
+        placeholderMessageId = sentMessage.message_id;
+      } catch (error) {
+        elizaLogger.warn('Error updating placeholder message:', error);
+      }
+
       // Convert IDs to UUIDs
       const userId = stringToUuid(ctx.from.id.toString()) as UUID;
 
@@ -1010,6 +1028,11 @@ export class MessageManager {
 
         // Execute callback to send messages and log memories
         const responseMessages = await callback(responseContent);
+
+        // Delete the placeholder message
+        if (placeholderMessageId) {
+          await ctx.telegram.deleteMessage(ctx.chat.id, placeholderMessageId);
+        }
 
         // Update state after response
         state = await this.runtime.updateRecentMessageState(state);
