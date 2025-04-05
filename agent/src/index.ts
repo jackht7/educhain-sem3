@@ -133,6 +133,9 @@ const startAgents = async () => {
   };
 
   directClient.start(serverPort);
+  directClient.app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+  });
 
   if (serverPort !== parseInt(settings.SERVER_PORT || '3000')) {
     elizaLogger.info(`Server started on alternate port ${serverPort}`);

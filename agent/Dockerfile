@@ -39,6 +39,11 @@ USER node
 # Create a new stage for the final image
 FROM node:23.3.0-slim
 
+ENV SERVER_PORT=8000
+ENV DEBUG=eliza:*
+ENV DEFAULT_LOG_LEVEL=debug
+ENV DAEMON_PROCESS=true
+
 # Install runtime dependencies if needed
 RUN npm install -g pnpm@9.15.1
 RUN apt-get update && \
@@ -57,6 +62,6 @@ COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/tsconfig.json /app/
 COPY --from=builder /app/pnpm-lock.yaml /app/
 
-EXPOSE 3000
+EXPOSE 8000
 # Set the command to run the application
 CMD ["pnpm", "start", "--character=characters/agent.character.json"]
