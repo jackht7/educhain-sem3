@@ -214,7 +214,7 @@ ${eventsList}
 Logic:
 ${codeLogic}
 
-This contract ${contractData.verified ? 'is verified' : 'is not verified'} on Etherscan/ Scrollscan.`,
+This contract ${contractData.verified ? 'is verified' : 'is not verified'}.`,
           content: contractData,
         });
       }

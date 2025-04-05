@@ -1,7 +1,7 @@
-import { messageCompletionFooter, shouldRespondFooter } from "@elizaos/core";
+import { messageCompletionFooter, shouldRespondFooter } from '@elizaos/core';
 
 export const telegramShouldRespondTemplate =
-    `# About {{agentName}}:
+  `# About {{agentName}}:
 {{bio}}
 
 # RESPONSE EXAMPLES
@@ -76,45 +76,28 @@ Thread of Tweets You Are Replying To:
 ` + shouldRespondFooter;
 
 export const telegramMessageHandlerTemplate =
-    // {{goals}}
-    `# Action Examples
+  // {{goals}}
+  `# Action Examples
 {{actionExamples}}
 (Action examples are for reference only. Do not use the information from them in your response.)
 
 # Knowledge
 {{knowledge}}
 
-# Task: Generate dialog and actions for the character {{agentName}}.
-About {{agentName}}:
-{{bio}}
-{{lore}}
-
-Examples of {{agentName}}'s dialog and actions:
-{{characterMessageExamples}}
-
 {{providers}}
-
-{{attachments}}
 
 {{actions}}
 
-# Capabilities
-Note that {{agentName}} is capable of reading/seeing/hearing various forms of media, including images, videos, audio, plaintext and PDFs. Recent attachments have been included above under the "Attachments" section.
-
-{{messageDirections}}
-
 {{recentMessages}}
 
-# Task: Generate a post/reply in the voice, style and perspective of {{agentName}} (@{{twitterUserName}}) while using the thread of tweets as additional context:
-Current Post:
-{{currentPost}}
-Thread of Tweets You Are Replying To:
+# Task: 
+Get information from providers and recentMessages, and perfrom the action if needed. The responses from the downstream action shuold be formatted as Telegram MarkdownV2.
 
 {{formattedConversation}}
 ` + messageCompletionFooter;
 
 export const telegramAutoPostTemplate =
-    `# Action Examples
+  `# Action Examples
 NONE: Respond but perform no additional action. This is the default if the agent is speaking and not doing anything additional.
 
 # Task: Generate an engaging community message as {{agentName}}.
@@ -152,7 +135,7 @@ Examples of {{agentName}}'s dialog and actions:
 ` + messageCompletionFooter;
 
 export const telegramPinnedMessageTemplate =
-    `# Action Examples
+  `# Action Examples
 NONE: Respond but perform no additional action. This is the default if the agent is speaking and not doing anything additional.
 
 # Task: Generate pinned message highlight as {{agentName}}.

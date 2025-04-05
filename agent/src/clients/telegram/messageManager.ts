@@ -16,7 +16,7 @@ import {
 import { stringToUuid } from '@elizaos/core';
 import { generateMessageResponse, generateShouldRespond } from '@elizaos/core';
 import { telegramMessageHandlerTemplate, telegramShouldRespondTemplate, telegramAutoPostTemplate, telegramPinnedMessageTemplate } from './templates.ts';
-import { cosineSimilarity, escapeMarkdown } from './utils.ts';
+import { cosineSimilarity, escapeMarkdownV2 } from './utils.ts';
 import { MESSAGE_CONSTANTS, TIMING_CONSTANTS, RESPONSE_CHANCES, TEAM_COORDINATION } from './constants.ts';
 
 import fs from 'fs';
@@ -654,7 +654,7 @@ export class MessageManager {
       });
     } else {
       const chunks = this.splitMessage(content.text);
-      const sentMessages: Message.TextMessage[] = [];
+      const sentMessages = [];
 
       // for (let i = 0; i < chunks.length; i++) {
       //   const chunk = escapeMarkdown(chunks[i]);
@@ -666,10 +666,10 @@ export class MessageManager {
       //   sentMessages.push(sentMessage);
       // }
       for (const chunk of chunks) {
-        const escapedChunk = escapeMarkdown(chunk);
-        const sentMessage = (await ctx.telegram.sendMessage(ctx.chat.id, escapedChunk, {
-          parse_mode: 'Markdown',
-        })) as Message.TextMessage;
+        const escapedChunk = escapeMarkdownV2(chunk);
+        const sentMessage = await ctx.telegram.sendMessage(ctx.chat.id, escapedChunk, {
+          parse_mode: 'MarkdownV2',
+        });
 
         sentMessages.push(sentMessage);
       }
@@ -790,6 +790,36 @@ export class MessageManager {
     const message = ctx.message;
     const chatId = ctx.chat?.id.toString();
     const messageText = 'text' in message ? message.text : 'caption' in message ? message.caption : '';
+
+    // Handle the /start command
+    const instruction = `Here’s what I do:
+- *Contract Analysis*: I review the structure, functions, events, and overall flow of the smart contract to help you understand how it works.
+- *Metadata Retrieval*: I fetch NFT metadata.
+
+What I need from you:
+- *Smart Contract Address* (starting with \`0x\`)
+- *Chain/Network* (e.g., Ethereum, Sepolia, etc.)
+- *Token ID* (for metadata retrieval)
+
+Currently, I only support the following networks:
+- *Ethereum, Sepolia*
+- *Scroll, Scroll Sepolia*
+`;
+
+    if (messageText === '/start') {
+      await ctx.telegram.sendMessage(ctx.chat.id, escapeMarkdownV2(instruction), {
+        parse_mode: 'MarkdownV2',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: 'Explain contract', callback_data: 'read_contract' },
+              { text: 'Get NFT metadata', callback_data: 'get_metadata' },
+            ],
+          ],
+        },
+      });
+      return;
+    }
 
     // Add team handling at the start
     if (this.runtime.character.clientConfig?.telegram?.isPartOfTeam && !this.runtime.character.clientConfig?.telegram?.shouldRespondOnlyToMentions) {
