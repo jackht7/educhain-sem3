@@ -77,21 +77,12 @@ Thread of Tweets You Are Replying To:
 
 export const telegramMessageHandlerTemplate =
   // {{goals}}
-  `# Action Examples
-{{actionExamples}}
-(Action examples are for reference only. Do not use the information from them in your response.)
-
-# Knowledge
-{{knowledge}}
-
+  `
 {{providers}}
-
-{{actions}}
-
 {{recentMessages}}
 
 # Task: 
-Get information from providers and recentMessages, and perfrom the action if needed. The responses from the downstream action shuold be formatted as Telegram MarkdownV2.
+Get information from providers and recentMessages
 
 {{formattedConversation}}
 ` + messageCompletionFooter;

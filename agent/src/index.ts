@@ -151,5 +151,5 @@ const startAgents = async () => {
 
 startAgents().catch((error) => {
   elizaLogger.error('Unhandled error in startAgents:', error);
-  process.exit(1);
+  // process.exit(1);
 });

@@ -120,7 +120,7 @@ export function escapeMarkdownV2(text: string): string {
           // First preserve any intended inline code spans
           .replace(/`.*?`/g, (match) => match)
           // Then only escape the minimal set of special characters that need escaping in Markdown mode
-          .replace(/([[\]()#+\-=|{}.!\\])/g, '\\$1')
+          .replace(/([[\]()_'#+\-=|{}.!\\])/g, '\\$1')
       );
     })
     .join('');

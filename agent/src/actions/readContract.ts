@@ -11,6 +11,8 @@ import {
 } from '@elizaos/core';
 import type { ContractReadParams } from '../types';
 import { codeAnalyzeTemplate, contractReadTemplate, nftMetadataTemplate } from '../templates/index.ts';
+import { isValidField } from '../utils.ts';
+
 export { contractReadTemplate, nftMetadataTemplate };
 
 export class ContractReader {
@@ -28,7 +30,8 @@ export class ContractReader {
   async getContractABI(params: ContractReadParams) {
     elizaLogger.info(`Reading contract: ${params.contractAddress} on ${params.chain}`);
     const baseUrl = this.getExplorerEndpoint(params.chain);
-    const apiKey = params.chain === 'scroll' || params.chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
+    const chain = params.chain.toLowerCase();
+    const apiKey = chain === 'scroll' || chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
 
     try {
       // Get contract ABI
@@ -232,24 +235,31 @@ This contract ${contractData.verified ? 'is verified' : 'is not verified'}.`,
     }
   },
   template: contractReadTemplate,
-  validate: async (runtime: IAgentRuntime) => {
+  validate: async (runtime: IAgentRuntime, _message: Memory, _state: State) => {
     const etherScanApiKey = runtime.getSetting('ETHERSCAN_API_KEY');
     const scrollScanApiKey = runtime.getSetting('SCROLLSCAN_API_KEY');
-    return typeof etherScanApiKey === 'string' && etherScanApiKey.length > 0 && typeof scrollScanApiKey === 'string' && scrollScanApiKey.length > 0;
+    const hasApiKeys: boolean =
+      typeof etherScanApiKey === 'string' && etherScanApiKey.length > 0 && typeof scrollScanApiKey === 'string' && scrollScanApiKey.length > 0;
+
+    // TODO: Pass the contractParams to handle
+    const contractParams = await buildContractReadParams(_state, runtime);
+    const isReadContract: boolean = isValidField(contractParams.contractAddress) && isValidField(contractParams.chain);
+
+    return hasApiKeys && isReadContract;
   },
   examples: [
     [
       {
-        user: 'Agent',
+        user: '{{user1}}',
         content: {
-          text: "I'll analyze the smart contract at 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 for you",
+          text: 'Explain smart contract 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
           action: 'READ_CONTRACT',
         },
       },
       {
-        user: '{{user1}}',
+        user: 'Agent',
         content: {
-          text: 'Explain smart contract 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+          text: "I'll analyze the smart contract at 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 for you",
           action: 'READ_CONTRACT',
         },
       },

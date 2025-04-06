@@ -656,18 +656,10 @@ export class MessageManager {
       const chunks = this.splitMessage(content.text);
       const sentMessages = [];
 
-      // for (let i = 0; i < chunks.length; i++) {
-      //   const chunk = escapeMarkdown(chunks[i]);
-      //   const sentMessage = (await ctx.telegram.sendMessage(ctx.chat.id, chunk, {
-      //     reply_parameters: i === 0 && replyToMessageId ? { message_id: replyToMessageId } : undefined,
-      //     parse_mode: 'Markdown',
-      //   })) as Message.TextMessage;
-
-      //   sentMessages.push(sentMessage);
-      // }
-      for (const chunk of chunks) {
-        const escapedChunk = escapeMarkdownV2(chunk);
-        const sentMessage = await ctx.telegram.sendMessage(ctx.chat.id, escapedChunk, {
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = escapeMarkdownV2(chunks[i]);
+        const sentMessage = await ctx.telegram.sendMessage(ctx.chat.id, chunk, {
+          reply_parameters: i === 0 && replyToMessageId ? { message_id: replyToMessageId } : undefined,
           parse_mode: 'MarkdownV2',
         });
 
@@ -1075,6 +1067,7 @@ Currently, I only support the following networks:
     } catch (error) {
       elizaLogger.error('❌ Error handling message:', error);
       elizaLogger.error('Error sending message:', error);
+      await ctx.telegram.sendMessage(ctx.chat.id, 'Unknown error. Please try again.');
     }
   }
 }
