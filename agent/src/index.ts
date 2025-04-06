@@ -1,7 +1,6 @@
 import { DirectClient } from '@elizaos/client-direct';
 import { AgentRuntime, elizaLogger, settings, stringToUuid, type Character } from '@elizaos/core';
 import { createNodePlugin } from '@elizaos/plugin-node';
-import { solanaPlugin } from '@elizaos/plugin-solana';
 import fs from 'fs';
 import net from 'net';
 import path from 'path';
@@ -37,7 +36,7 @@ export function createAgent(character: Character, db: any, cache: any, token: st
     modelProvider: character.modelProvider,
     evaluators: [],
     character,
-    plugins: [nodePlugin, character.settings?.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null].filter(Boolean),
+    plugins: [nodePlugin].filter(Boolean),
     providers: [contractProvider],
     actions: [readContract, getMetadata],
     services: [],
@@ -134,6 +133,9 @@ const startAgents = async () => {
   };
 
   directClient.start(serverPort);
+  directClient.app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+  });
 
   if (serverPort !== parseInt(settings.SERVER_PORT || '3000')) {
     elizaLogger.info(`Server started on alternate port ${serverPort}`);
@@ -149,5 +151,5 @@ const startAgents = async () => {
 
 startAgents().catch((error) => {
   elizaLogger.error('Unhandled error in startAgents:', error);
-  process.exit(1);
+  // process.exit(1);
 });

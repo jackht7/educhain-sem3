@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { IAgentRuntime, State, composeContext, generateObjectDeprecated, ModelClass, Memory, HandlerCallback, elizaLogger } from '@elizaos/core';
 import { nftMetadataTemplate } from '../templates/index.ts';
 import { NFTMetadataParams } from '../types';
+import { isValidField } from '../utils.ts';
 
 export class ContractReader {
   private readonly infuraApiKey: string;
@@ -25,7 +26,8 @@ export class ContractReader {
     const provider = new ethers.JsonRpcProvider(`${infuraBaseUrl}/${this.infuraApiKey}`);
     const contractAddress = params.contractAddress;
     const tokenId = params.tokenId;
-    const apiKey = params.chain === 'scroll' || params.chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
+    const chain = params.chain.toLowerCase();
+    const apiKey = chain === 'scroll' || chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
 
     try {
       // Check if it's ERC721 or ERC1155
@@ -135,11 +137,11 @@ const buildNFTMetadataParams = async (state: State, runtime: IAgentRuntime): Pro
 export const getMetadata = {
   name: 'GET_METADATA',
   description: 'Get metadata of an NFT using Infura',
-  handler: async (runtime: IAgentRuntime, _message: Memory, state: State, _options: any, callback?: HandlerCallback) => {
+  handler: async (runtime: IAgentRuntime, _message: Memory, _state: State, _options: any, callback?: HandlerCallback) => {
     elizaLogger.info('Get NFT metadata action handler called');
 
     try {
-      const nftParams = await buildNFTMetadataParams(state, runtime);
+      const nftParams = await buildNFTMetadataParams(_state, runtime);
       const contractReader = new ContractReader(runtime);
       const metadata = await contractReader.getNFTMetadata(nftParams);
 
@@ -171,9 +173,14 @@ ${metadata.attributes.map((attr) => `- ${attr.trait_type}: ${attr.value}`).join(
     }
   },
   template: nftMetadataTemplate,
-  validate: async (runtime: IAgentRuntime) => {
+  validate: async (runtime: IAgentRuntime, _message: Memory, _state: State) => {
     const infuraKey = runtime.getSetting('INFURA_API_KEY');
-    return typeof infuraKey === 'string' && infuraKey.length > 0;
+    const hasApiKey = typeof infuraKey === 'string' && infuraKey.length > 0;
+
+    // TODO: Pass the contractParams to handle
+    const contractParams = await buildNFTMetadataParams(_state, runtime);
+    const isGetMetadata: boolean = isValidField(contractParams.contractAddress) && isValidField(contractParams.chain) && isValidField(contractParams.tokenId);
+    return hasApiKey && isGetMetadata;
   },
   examples: [
     [

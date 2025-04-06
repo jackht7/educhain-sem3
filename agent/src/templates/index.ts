@@ -10,8 +10,12 @@ Respond with a JSON markdown block containing only the extracted values:
 
 \`\`\`json
 {
-    "contractAddress": string,
-    "chain": "ethereum" | "base" | "sepolia" | "bsc" | "arbitrum" | "avalanche" | "polygon" | "optimism" | "scroll" | "scroll-sepolia"
+    {{#if contractAddress}}
+    "contractAddress": "{{contractAddress}}",
+    {{/if}}
+    {{#if chain}}
+    "chain": "{{chain}}",
+    {{/if}}
 }
 \`\`\`
 `;
@@ -29,9 +33,16 @@ Respond with a JSON markdown block containing only the extracted values:
 
 \`\`\`json
 {
-    "contractAddress": string,
-    "tokenId": string,
-    "chain": "ethereum" | "base" | "sepolia" | "bsc" | "arbitrum" | "avalanche" | "polygon" | "optimism" | "scroll" | "scroll-sepolia"
+    {{#if contractAddress}}
+    "contractAddress": "{{contractAddress}}",
+    {{/if}}
+    {{#if chain}}
+    "chain": "{{chain}}",
+    {{/if}}
+    {{/if}}
+    {{#if tokenId}}
+    "tokenId": "{{tokenId}}",
+    {{/if}}
 }
 \`\`\`
 `;
