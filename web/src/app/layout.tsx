@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 
 import ContextProvider from '@/context';
 import { KeyboardShortcuts } from '@/components/KeyboardShortcuts';
+import OCConnectWrapper from '@/components/OCConnectWrapper';
 
 import '../styles/globals.css';
 
@@ -30,10 +31,21 @@ export default async function RootLayout({
   const headersObj = await headers();
   const cookies = headersObj.get('cookie');
 
+  // Sandbox Mode
+  const opts = {
+    clientId: 'clientId',
+    redirectUri: 'http://localhost:3000/redirect',
+    referralCode: 'PARTNER6',
+  };
+
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ContextProvider cookies={cookies}>{children}</ContextProvider>
+        <ContextProvider cookies={cookies}>
+          <OCConnectWrapper opts={opts} sandboxMode={true}>
+            {children}
+          </OCConnectWrapper>
+        </ContextProvider>
         <KeyboardShortcuts />
       </body>
     </html>

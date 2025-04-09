@@ -46,7 +46,7 @@ export function createContractBuilder(contract: Contract) {
       <div
         style={{
           width: '100%', // full width of the container
-          height: '200px', // increased height to make nodes more visible
+          height: '100px', // increased height to make nodes more visible
           backgroundColor: '#fafaf9',
           marginBottom: '1rem', // spacing between contracts
           borderRadius: '8px',
@@ -57,7 +57,7 @@ export function createContractBuilder(contract: Contract) {
           nodes={nodes}
           edges={edges}
           draggable={false}
-          panOnDrag={true}
+          panOnDrag={false}
           edgesFocusable={false}
           nodesDraggable={false}
           nodesConnectable={false}
@@ -65,12 +65,13 @@ export function createContractBuilder(contract: Contract) {
           zoomOnScroll={true}
           zoomOnDoubleClick={false}
           onNodeClick={onNodeClick}
-          fitView={true}
+          // fitView={true}
           minZoom={0.5}
           maxZoom={2}
           proOptions={{ hideAttribution: true }}
           className='react-flow-container'
           style={{ background: '#fafaf9' }}
+          defaultViewport={{ x: 10, y: 20, zoom: 1 }}
         >
           <Background color='#aaa' gap={16} />
         </ReactFlow>
