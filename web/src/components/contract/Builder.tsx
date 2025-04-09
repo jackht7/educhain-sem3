@@ -96,25 +96,9 @@ export function Builder() {
   const createContract = async (amount: number) => {
     if (!signer?.address) return;
 
-    const args = {
-      workflowName: uuidv4(),
-      payee: signer.address,
-      workflowAmount: BigInt(amount),
-      usdcAddress: process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS ?? '',
-      nftAddress: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS ?? '',
-      hookAddress: process.env.NEXT_PUBLIC_HOOK_CONTRACT_ADDRESS ?? '',
-    };
-
     try {
       const workflowFactory = new Workflow__factory(signer);
-      const deployedContract = await workflowFactory.deploy(
-        args.workflowName,
-        args.payee,
-        args.workflowAmount,
-        args.usdcAddress,
-        args.nftAddress,
-        args.hookAddress
-      );
+      const deployedContract = await workflowFactory.deploy(process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS ?? '');
       const contractAddress = await deployedContract.getAddress();
       console.log('Contract deployed at:', contractAddress);
       return contractAddress;

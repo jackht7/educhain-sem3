@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 import { toast } from 'sonner';
 import { pinata } from '@/pinata';
 import { ethers } from 'ethers';
-import { EvmChains, OnChainClientOptions, SignProtocolClient, SpMode } from '@ethsign/sp-sdk';
 
 import { useEthersSigner } from '@/app/hooks/useEthersSigner';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Toaster } from '@/components/ui/sonner';
+import { Workflow__factory, NFT__factory } from '../../../typechain';
 
 interface JobModalProps {
   isOpen: boolean;
@@ -27,15 +27,11 @@ interface JobModalProps {
 }
 
 interface Attestation {
-  attestationId: string;
-  indexingValue: string;
   txHash: string;
 }
 
 const JobModal = ({ isOpen, onClose, data }: JobModalProps) => {
   const signer = useEthersSigner();
-  const { address, chainId } = useAccount();
-  const [signClient, setSignClient] = useState<SignProtocolClient>();
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [file, setFile] = useState<string | null>(null);
@@ -43,17 +39,8 @@ const JobModal = ({ isOpen, onClose, data }: JobModalProps) => {
   const [attestation, setAttestation] = useState<Attestation | null>(null);
   const [metadata, setMetadata] = useState<string | null>(null);
 
-  useEffect(() => {
-    // TODO: change chain based on chainId
-    const newClient = new SignProtocolClient(SpMode.OnChain, {
-      chain: EvmChains.scrollSepolia,
-    } as OnChainClientOptions);
-
-    setSignClient(newClient);
-  }, [address, chainId, signer]);
-
   const handleApprove = async () => {
-    if (!signClient || !data.workflowAddress) return;
+    if (!data.workflowAddress) return;
     try {
       setIsApproving(true);
 
@@ -75,20 +62,11 @@ const JobModal = ({ isOpen, onClose, data }: JobModalProps) => {
       const metadataCid = upload.cid;
       setMetadata(metadataCid);
 
-      const attestationData = {
-        token_uri: `https://gateway.pinata.cloud/ipfs/${metadataCid}`.toString(),
-        workflow_address: ethers.getAddress(data.workflowAddress),
-      };
+      const workflowFactory = new Workflow__factory(signer);
+      const triggerMintFunc = workflowFactory.attach(data.workflowAddress).getFunction('triggerMint');
+      const tx = await triggerMintFunc(data.workflowAddress, metadataCid);
+      setAttestation({ txHash: tx.hash });
 
-      const schemaId = process.env.NEXT_PUBLIC_SIGN_PROTOCOL_SCHEMA_ID;
-      const attestation = await signClient.createAttestation({
-        schemaId: schemaId!,
-        data: attestationData,
-        indexingValue: metadataCid,
-      });
-
-      console.log('Attestation created:', attestation);
-      setAttestation(attestation as Attestation);
       toast.success(`Attestation has been completed successfully`);
     } catch (error) {
       console.error('Error creating attestation:', error);
@@ -159,18 +137,14 @@ const JobModal = ({ isOpen, onClose, data }: JobModalProps) => {
                     <Label htmlFor='status'>Status</Label>
                     {attestation ? (
                       <div className='px-3 py-2 bg-green-700 text-white rounded-md font-medium'>
-                        Id:{' '}
+                        <br />
+                        TxHash:{' '}
                         <Link
-                          href={`https://testnet-scan.sign.global/attestation/onchain_evm_534351_${attestation.attestationId}`}
+                          href={`https://edu-chain-testnet.blockscout.com/tx/${attestation.txHash}`}
                           target='_blank'
                           rel='noopener noreferrer'
                           className='underline'
                         >
-                          {attestation.attestationId}
-                        </Link>
-                        <br />
-                        TxHash:{' '}
-                        <Link href={`https://sepolia.scrollscan.com/tx/${attestation.txHash}`} target='_blank' rel='noopener noreferrer' className='underline'>
                           {attestation.txHash}
                         </Link>
                         <br />

@@ -32,7 +32,13 @@ export type { IERC165 } from "./@openzeppelin/contracts/utils/introspection/IERC
 export { IERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/IERC165__factory";
 export type { Math } from "./@openzeppelin/contracts/utils/math/Math";
 export { Math__factory } from "./factories/@openzeppelin/contracts/utils/math/Math__factory";
+export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
+export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
 export type { Strings } from "./@openzeppelin/contracts/utils/Strings";
 export { Strings__factory } from "./factories/@openzeppelin/contracts/utils/Strings__factory";
+export type { INFT } from "./contracts/interfaces/INFT";
+export { INFT__factory } from "./factories/contracts/interfaces/INFT__factory";
 export type { NFT } from "./contracts/NFT";
 export { NFT__factory } from "./factories/contracts/NFT__factory";
+export type { Workflow } from "./contracts/Workflow";
+export { Workflow__factory } from "./factories/contracts/Workflow__factory";

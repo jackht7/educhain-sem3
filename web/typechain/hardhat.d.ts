@@ -66,13 +66,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Math__factory>;
     getContractFactory(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReentrancyGuard__factory>;
+    getContractFactory(
       name: "Strings",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Strings__factory>;
     getContractFactory(
+      name: "INFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INFT__factory>;
+    getContractFactory(
       name: "NFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NFT__factory>;
+    getContractFactory(
+      name: "Workflow",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Workflow__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -140,15 +152,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Math>;
     getContractAt(
+      name: "ReentrancyGuard",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReentrancyGuard>;
+    getContractAt(
       name: "Strings",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Strings>;
     getContractAt(
+      name: "INFT",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INFT>;
+    getContractAt(
       name: "NFT",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.NFT>;
+    getContractAt(
+      name: "Workflow",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Workflow>;
 
     deployContract(
       name: "Ownable",
@@ -203,13 +230,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Math>;
     deployContract(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
       name: "Strings",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "INFT",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFT>;
+    deployContract(
       name: "NFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NFT>;
+    deployContract(
+      name: "Workflow",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Workflow>;
 
     deployContract(
       name: "Ownable",
@@ -277,15 +316,30 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Math>;
     deployContract(
+      name: "ReentrancyGuard",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
       name: "Strings",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "INFT",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.INFT>;
+    deployContract(
       name: "NFT",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NFT>;
+    deployContract(
+      name: "Workflow",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Workflow>;
 
     // default types
     getContractFactory(
