@@ -14,7 +14,7 @@ Respond with a JSON markdown block containing only the extracted values:
     "contractAddress": "{{contractAddress}}",
     {{/if}}
     {{#if chain}}
-    "chain": "{{chain}}",
+    "chain": "ethereum" | "sepolia" | "scroll" | "scroll-sepolia" | "educhain" | "educhain-testnet",
     {{/if}}
 }
 \`\`\`
@@ -37,7 +37,7 @@ Respond with a JSON markdown block containing only the extracted values:
     "contractAddress": "{{contractAddress}}",
     {{/if}}
     {{#if chain}}
-    "chain": "{{chain}}",
+    "chain": "ethereum" | "sepolia" | "scroll" | "scroll-sepolia" | "educhain" | "educhain-testnet",
     {{/if}}
     {{/if}}
     {{#if tokenId}}

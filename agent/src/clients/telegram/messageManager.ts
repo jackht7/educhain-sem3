@@ -795,6 +795,7 @@ What I need from you:
 
 Currently, I only support the following networks:
 - *Ethereum, Sepolia*
+- *Educhain, Educhain Testnet*
 - *Scroll, Scroll Sepolia*
 `;
 

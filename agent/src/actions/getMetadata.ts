@@ -8,11 +8,13 @@ export class ContractReader {
   private readonly infuraApiKey: string;
   private readonly etherScanApiKey: string;
   private readonly scrollScanApiKey: string;
+  private readonly educhainScanApiKey: string;
 
   constructor(private runtime: IAgentRuntime) {
     this.infuraApiKey = this.runtime.getSetting('INFURA_API_KEY');
     this.etherScanApiKey = this.runtime.getSetting('ETHERSCAN_API_KEY');
     this.scrollScanApiKey = this.runtime.getSetting('SCROLLSCAN_API_KEY');
+    this.educhainScanApiKey = this.runtime.getSetting('EDUCHAINSCAN_API_KEY') ?? 'empty';
     if (!this.infuraApiKey || !this.etherScanApiKey || !this.scrollScanApiKey) {
       elizaLogger.warn('Infura API key/ Etherscan API key/ Scrollscan API key not found in settings');
     }
@@ -27,8 +29,14 @@ export class ContractReader {
     const contractAddress = params.contractAddress;
     const tokenId = params.tokenId;
     const chain = params.chain.toLowerCase();
-    const apiKey = chain === 'scroll' || chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
-
+    let apiKey: string;
+    if (chain === 'ethereum' || chain === 'sepolia') {
+      apiKey = this.etherScanApiKey;
+    } else if (chain === 'scroll' || chain === 'scroll-sepolia') {
+      apiKey = this.scrollScanApiKey;
+    } else {
+      apiKey = this.educhainScanApiKey;
+    }
     try {
       // Check if it's ERC721 or ERC1155
       const queryParams = new URLSearchParams({
@@ -113,6 +121,8 @@ export class ContractReader {
       sepolia: 'https://api-sepolia.etherscan.io',
       scroll: 'https://api.scrollscan.com',
       'scroll-sepolia': 'https://api-sepolia.scrollscan.com',
+      educhain: 'https://educhain.blockscout.com',
+      'educhain-testnet': 'https://edu-chain-testnet.blockscout.com',
     };
 
     return endpoints[chain] || endpoints['ethereum'];
