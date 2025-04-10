@@ -18,10 +18,12 @@ export { contractReadTemplate, nftMetadataTemplate };
 export class ContractReader {
   private readonly etherScanApiKey: string;
   private readonly scrollScanApiKey: string;
+  private readonly educhainScanApiKey: string;
 
   constructor(private runtime: IAgentRuntime) {
     this.etherScanApiKey = this.runtime.getSetting('ETHERSCAN_API_KEY');
     this.scrollScanApiKey = this.runtime.getSetting('SCROLLSCAN_API_KEY');
+    this.educhainScanApiKey = this.runtime.getSetting('EDUCHAINSCAN_API_KEY') ?? 'empty';
     if (!this.etherScanApiKey || !this.scrollScanApiKey) {
       elizaLogger.warn('Etherscan API key or Scrollscan API key not found in settings');
     }
@@ -31,7 +33,15 @@ export class ContractReader {
     elizaLogger.info(`Reading contract: ${params.contractAddress} on ${params.chain}`);
     const baseUrl = this.getExplorerEndpoint(params.chain);
     const chain = params.chain.toLowerCase();
-    const apiKey = chain === 'scroll' || chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
+
+    let apiKey: string;
+    if (chain === 'ethereum' || chain === 'sepolia') {
+      apiKey = this.etherScanApiKey;
+    } else if (chain === 'scroll' || chain === 'scroll-sepolia') {
+      apiKey = this.scrollScanApiKey;
+    } else {
+      apiKey = this.educhainScanApiKey;
+    }
 
     try {
       // Get contract ABI
@@ -152,6 +162,8 @@ export class ContractReader {
       sepolia: 'https://api-sepolia.etherscan.io',
       scroll: 'https://api.scrollscan.com',
       'scroll-sepolia': 'https://api-sepolia.scrollscan.com',
+      educhain: 'https://educhain.blockscout.com',
+      'educhain-testnet': 'https://edu-chain-testnet.blockscout.com',
     };
 
     return endpoints[chain] || endpoints['ethereum'];
