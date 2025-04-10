@@ -108,7 +108,14 @@ export class ContractReader {
 
   async getContractInfo(address: string, chain: string) {
     const baseUrl = this.getExplorerEndpoint(chain);
-    const apiKey = chain === 'scroll' || chain === 'scroll-sepolia' ? this.scrollScanApiKey : this.etherScanApiKey;
+    let apiKey: string;
+    if (chain === 'ethereum' || chain === 'sepolia') {
+      apiKey = this.etherScanApiKey;
+    } else if (chain === 'scroll' || chain === 'scroll-sepolia') {
+      apiKey = this.scrollScanApiKey;
+    } else {
+      apiKey = this.educhainScanApiKey;
+    }
 
     try {
       const queryParams = new URLSearchParams({
